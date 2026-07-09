@@ -1,4 +1,3 @@
-//ReportGenerator.js
 const path = require("path");
 const fs = require("fs/promises");
 const Handlebars = require("handlebars");

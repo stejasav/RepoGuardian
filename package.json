@@ -1,14 +1,26 @@
 {
   "name": "repoguardian",
   "version": "1.0.0",
+  "description": "AI-powered GitHub Repository Security Scanner",
   "main": "index.js",
+  "bin": {
+    "repoguardian": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "type": "commonjs",
+  "keywords": [
+    "security",
+    "scanner",
+    "github",
+    "cli",
+    "ai",
+    "audit",
+    "npm"
+  ],
+  "author": "Tejasav Singh",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@google/genai": "^2.10.0",
     "axios": "^1.18.1",

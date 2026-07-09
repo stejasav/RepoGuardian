@@ -1,4 +1,3 @@
-//RepoCli.js
 const axios = require("axios");
 const IGNORED_DIRECTORIES = require('./constants/ignoredDirectories');
 const IGNORED_FILES = require('./constants/ignoreFiles');

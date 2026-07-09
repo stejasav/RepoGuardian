@@ -1,4 +1,3 @@
-//AIService.js
 const { GoogleGenAI } = require("@google/genai")
 
 async function analyseCode({ filePath, code }) {

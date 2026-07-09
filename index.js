@@ -1,4 +1,4 @@
-//index.js
+#!/usr/bin/env node
 const ParseURL = require('./util/ParseURL');
 const RepoCli = require('./RepoCli');
 require("dotenv").config();
