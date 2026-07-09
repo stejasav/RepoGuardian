@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoGuardian Security Report — {{metadata.owner}}/{{metadata.repositoryName}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-main: #ffffff;
+      --bg-subtle: #f8f9fa;
+      --border: #e9ecef;
+      --border-dark: #dee2e6;
+      --text-main: #212529;
+      --text-muted: #6c757d;
+      
+      --high: #dc3545;
+      --high-bg: #fff5f5;
+      --medium: #fd7e14;
+      --medium-bg: #fff9db;
+      --low: #28a745;
+      --low-bg: #ebfbee;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── HEADER ── */
+    header {
+      margin-bottom: 35px;
+      padding-bottom: 25px;
+      border-bottom: 2px solid var(--text-main);
+    }
+    
+    .meta-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .brand {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .repo-name {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+    .repo-name strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* ── SECTION TITLES ── */
+    h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 35px 0 15px;
+      color: var(--text-main);
+    }
+
+    /* ── OVERVIEW METRICS ── */
+    .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    .metrics-table th, .metrics-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border: 1px solid var(--border-dark);
+    }
+
+    .metrics-table th {
+      background-color: var(--bg-subtle);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 20%;
+    }
+
+    .metrics-table td {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .count-high { color: var(--high); }
+    .count-medium { color: var(--medium); }
+    .count-low { color: var(--low); }
+
+    /* ── FINDINGS ── */
+    .finding-block {
+      border: 1px solid var(--border-dark);
+      border-radius: 4px;
+      margin-bottom: 25px;
+      overflow: hidden;
+    }
+
+    .finding-header {
+      background-color: var(--bg-subtle);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .finding-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+    .badge.HIGH { background-color: var(--high-bg); color: var(--high); border: 1px solid var(--high); }
+    .badge.MEDIUM { background-color: var(--medium-bg); color: var(--medium); border: 1px solid var(--medium); }
+    .badge.LOW { background-color: var(--low-bg); color: var(--low); border: 1px solid var(--low); }
+
+    .finding-details {
+      padding: 18px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .meta-label {
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-right: 5px;
+    }
+
+    .mono-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      word-break: break-all;
+      color: #c92a2a;
+    }
+
+    .info-section {
+      margin-bottom: 12px;
+    }
+    .info-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .info-content {
+      font-size: 13.5px;
+      color: var(--text-main);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      border: 1px dashed var(--border-dark);
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 60px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-dark);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media print {
+      body { padding: 0; }
+      .finding-block { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="meta-top">
+        <div class="brand">RepoGuardian</div>
+        <div id="report-date"></div>
+      </div>
+      <h1>Repository Security Audit Report</h1>
+      <div class="repo-name">Target: <strong>{{metadata.owner}} / {{metadata.repositoryName}}</strong></div>
+    </header>
+
+    <main>
+      <h2>Executive Summary</h2>
+      <table class="metrics-table">
+        <thead>
+          <tr>
+            <th>Scanned Files</th>
+            <th>Total Findings</th>
+            <th>High Severity</th>
+            <th>Medium Severity</th>
+            <th>Low Severity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{summary.totalFiles}}</td>
+            <td>{{summary.totalFindings}}</td>
+            <td class="count-high">{{summary.high}}</td>
+            <td class="count-medium">{{summary.medium}}</td>
+            <td class="count-low">{{summary.low}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Vulnerability Analysis</h2>
+      <div class="findings-list">
+        {{#if findings}}
+          {{#each findings}}
+          <div class="finding-block">
+            <div class="finding-header">
+              <div class="finding-title">{{issue}}</div>
+              <span class="badge {{severity}}">{{severity}}</span>
+            </div>
+            <div class="finding-details">
+              <div class="meta-grid">
+                <div><span class="meta-label">File:</span> <span style="font-family: monospace;">{{fileName}}</span></div>
+                <div style="text-align: right;"><span class="meta-label">Line:</span> {{line_No}}</div>
+              </div>
+              
+              <div class="info-section">
+                <div class="info-title">Code Evidence</div>
+                <div class="mono-box">{{matchedValue}}</div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Description</div>
+                <div class="info-content">
+                  {{explanation}}
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-title">Remediation</div>
+                <div class="info-content">
+                  {{recommendation}}
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="empty-state">
+            No security findings detected. Your repository looks clean!
+          </div>
+        {{/if}}
+      </div>
+    </main>
+
+    <footer>
+      <div>Generated by RepoGuardian Security Platform</div>
+      <div>Confidential — Internal Use Only</div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('report-date').textContent = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }) + ' UTC';
+  </script>
+</body>
+</html>
