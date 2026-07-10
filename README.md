@@ -1,131 +1,323 @@
-# RepoGuardian
+# 🛡️ RepoGuardian
 
-**RepoGuardian** is a lightweight security analysis tool that scans a public GitHub repository, looks for potential security issues, and generates a polished HTML report. The report is rendered using a Handlebars template with a clean, professional design.
+> AI-powered GitHub Repository Security Scanner
 
----
+RepoGuardian is a lightweight CLI tool that scans any **public GitHub repository**, analyzes its source code using **Google Gemini AI**, detects potential security vulnerabilities, and generates a beautiful, professional HTML security report.
 
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Generating Reports](#generating-reports)
-- [Customization](#customization)
-- [Contributing](#contributing)
-- [License](#license)
+Instead of manually reviewing hundreds of files, RepoGuardian automates the entire process—from fetching the repository to generating a detailed security audit.
 
 ---
 
-## Overview
+# ✨ Features
 
-RepoGuardian fetches file contents from a remote GitHub repository, runs a simple AI‑driven analysis (via the Gemini API), and produces a **styled HTML security report**. The report includes an executive summary, severity distribution, and detailed findings.
+- 🔍 Scan any public GitHub repository
+- 🤖 AI-powered security analysis using Google Gemini
+- 🔐 Detects:
+  - Hardcoded API Keys
+  - Secrets & Tokens
+  - JWT Secrets
+  - Database Credentials
+  - Hardcoded Passwords
+  - Dangerous TODO/FIXME Comments
+  - Weak Authentication
+  - Weak Cryptography
+  - Insecure Configurations
+  - Exposed Credentials
+- 📊 Generates a clean and professional HTML security report
+- 🚨 Categorizes findings into:
+  - HIGH
+  - MEDIUM
+  - LOW
+- 📁 Automatically versions reports
+- ⚡ Easy-to-use CLI
 
-## Features
+---
 
-- **One‑click scanning** of any public GitHub repository.
-- **AI‑powered analysis** using the Google Gemini model (via `AIService`).
-- **Dynamic HTML report** rendered with Handlebars and a premium, responsive design.
-- **Versioned report files** – each execution creates `security-report-<N>.html` to keep history.
-- **Environment‑based configuration** (`.env`) for API keys and other secrets.
-- **Extensible architecture** – easy to plug‑in additional analysis rules.
+# 📦 Installation
 
-## Prerequisites
-
-- Node.js **v18+** (recommended LTS)
-- npm (shipped with Node)
-- A **Google Gemini API key** (or any compatible LLM endpoint). The key should be stored in a `.env` file as `GEMINI_API_KEY`.
-
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/stejasav/RepoGuardian
-cd RepoGuardian
-
-# Install dependencies
-npm install
-```
-
-## Configuration
-
-Create a `.env` file at the project root (it is already ignored via `.gitignore`). Add the following line:
-
-```dotenv
-GEMINI_API_KEY=your-gemini-api-key-here
-```
-
-> **Note:** Never commit real API keys to the repository. The `.env` file is excluded from version control.
-
-## Usage
-
-The CLI entry point is `index.js`. Run it with the URL of the repository you want to scan:
+Install globally:
 
 ```bash
-node index.js https://github.com/owner/repository
+npm install -g @stejasav/repoguardian
 ```
 
-The tool will:
-1. Clone the repo into a temporary directory (in‑memory, no local checkout).
-2. Walk through the files, collecting source code.
-3. Send the aggregated content to the Gemini model for analysis.
-4. Generate an HTML report inside the `reports/` folder.
+Or use directly with **npx** (no installation required):
 
-Example output:
-
-```
-Report generated successfully!
-Location: /path/to/RepoGuardian/reports/security-report-1.html
+```bash
+npx @stejasav/repoguardian https://github.com/owner/repository
 ```
 
-## Project Structure
+---
 
-```
-RepoGuardian/
-├─ index.js                # CLI entry point
-├─ RepoCli.js              # High‑level orchestrator
-├─ services/
-│  ├─ AIService.js        # Wrapper around Gemini API
-│  └─ ReportGenerator.js  # Compiles Handlebars template & writes report
-├─ templates/
-│  └─ report.hbs          # Handlebars HTML template (styled)
-├─ reports/                # Generated HTML reports (auto‑created)
-├─ .env                    # Environment variables (API key, etc.)
-└─ README.md               # ★ This file
-```
+# 📋 Requirements
 
-## Generating Reports
+- Node.js v18 or later
+- A Google Gemini API Key
 
-Each execution creates a uniquely numbered report (`security-report-1.html`, `security-report-2.html`, …) so you can keep historical records. The numbering logic lives in `services/ReportGenerator.js`:
-```js
-const files = await fs.readdir(reportDir);
-const reportFiles = files.filter(f => f.startsWith('security-report-') && f.endsWith('.html'));
-const reportNumber = reportFiles.length + 1;
-const fileName = `security-report-${reportNumber}.html`;
+Generate an API key from:
+
+https://aistudio.google.com/app/apikey
+
+---
+
+# ⚙️ Configuration
+
+Create a `.env` file inside the directory where you'll run RepoGuardian.
+
+Example:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Open the generated file in a browser to view the fully‑styled report.
+Example project structure:
 
-## Customization
+```
+MyProject/
+│
+├── .env
+├── package.json
+└── reports/
+```
 
-- **Template** – Edit `templates/report.hbs` to change the look & feel. The template uses Handlebars helpers and pulls data from `ReportGenerator`.
-- **Styling** – CSS is embedded directly in the template; modify the `<style>` block for branding.
-- **Analysis Rules** – Extend `services/AIService.js` to add more sophisticated scanning logic or integrate other static analysis tools.
+> **Important**
+>
+> Never commit your `.env` file or API key to GitHub.
 
-## Contributing
+---
 
-Contributions are welcome! Please follow these steps:
+# 🚀 Usage
+
+Scan a public GitHub repository by providing its URL.
+
+```bash
+repoguardian https://github.com/facebook/react
+```
+
+or
+
+```bash
+npx repoguardian https://github.com/facebook/react
+```
+
+Example:
+
+```bash
+repoguardian https://github.com/stejasav/GitStat
+```
+
+---
+
+# ⚙️ How It Works
+
+RepoGuardian performs the following steps automatically:
+
+1. Fetches repository contents using the GitHub REST API.
+2. Traverses every directory recursively.
+3. Ignores unnecessary directories and binary assets.
+4. Downloads each source code file.
+5. Sends the source code to Google Gemini AI.
+6. Detects potential security vulnerabilities.
+7. Categorizes findings by severity.
+8. Generates a professional HTML security report.
+
+---
+
+# 🔍 Security Checks
+
+RepoGuardian currently detects:
+
+- Hardcoded API Keys
+- Hardcoded Passwords
+- JWT Secrets
+- Database Credentials
+- Access Tokens
+- Secrets
+- Dangerous TODO/FIXME Comments
+- Weak Authentication
+- Weak Cryptography
+- Insecure Configurations
+
+---
+
+# 📄 Output
+
+After scanning, RepoGuardian automatically creates a `reports` directory inside your current working directory.
+
+Example:
+
+```
+MyProject/
+│
+├── .env
+├── package.json
+├── node_modules/
+└── reports/
+    ├── security-report-1.html
+    ├── security-report-2.html
+    └── security-report-3.html
+```
+
+Each report contains:
+
+- Executive Summary
+- Repository Information
+- Files Scanned
+- Total Findings
+- Severity Distribution
+- Detailed Vulnerability Analysis
+- Code Evidence
+- AI Explanation
+- Recommended Fixes
+
+---
+
+# 💻 Example
+
+```bash
+repoguardian https://github.com/stejasav/GitStat
+```
+
+Console Output:
+
+```text
+Fetching Repository...
+Scanning Files...
+Analyzing Source Code...
+
+✅ Report generated successfully!
+
+Location:
+./reports/security-report-1.html
+```
+
+---
+
+# 📊 Sample Report
+
+The generated report includes:
+
+- Executive Summary
+- Repository Metadata
+- Security Findings
+- Severity Classification
+- Code Evidence
+- AI-generated Explanation
+- Recommended Fixes
+
+> **Add screenshots here for a better npm and GitHub presentation.**
+
+Example:
+
+```markdown
+## Executive Summary
+
+![Overview](assets/report-overview.png)
+
+## Vulnerability Details
+
+![Findings](assets/report-findings.png)
+```
+
+---
+
+# 🏗️ Architecture
+
+```
+               GitHub Repository
+                       │
+                       ▼
+             GitHub REST API
+                       │
+                       ▼
+        Recursive Repository Traversal
+                       │
+                       ▼
+         Download Source Code Files
+                       │
+                       ▼
+           Google Gemini AI Analysis
+                       │
+                       ▼
+         Security Vulnerability Detection
+                       │
+                       ▼
+      Handlebars HTML Report Generation
+                       │
+                       ▼
+      Professional Security Audit Report
+```
+
+---
+
+# 🛠️ Tech Stack
+
+- Node.js
+- Google Gemini AI
+- GitHub REST API
+- Axios
+- Handlebars
+- HTML
+- CSS
+
+---
+
+# 📌 Roadmap
+
+Future improvements planned:
+
+- [ ] PDF Report Export
+- [ ] Markdown Report Export
+- [ ] Parallel File Scanning
+- [ ] GitHub Actions Integration
+- [ ] Security Score
+- [ ] Custom Ignore Rules
+- [ ] SARIF Export
+- [ ] Support for Private Repositories
+- [ ] Multi-LLM Support (Gemini, OpenAI, Claude)
+
+---
+
+# 🤝 Contributing
+
+Contributions are always welcome!
+
 1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/your-feature`).
-3. Make your changes and ensure the code passes linting/tests.
-4. Submit a pull request with a clear description of the changes.
 
-## License
+2. Create a new branch.
 
-This project is licensed under the **MIT License** – see the `LICENSE` file for details.
+```bash
+git checkout -b feature/new-feature
+```
+
+3. Commit your changes.
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push your branch.
+
+```bash
+git push origin feature/new-feature
+```
+
+5. Open a Pull Request.
 
 ---
 
-*Generated by RepoGuardian*
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# 👨‍💻 Author
+
+**Tejasav Singh**
+
+GitHub: https://github.com/stejasav
+
+---
+
+## ⭐ If you found RepoGuardian useful, consider giving the repository a star!

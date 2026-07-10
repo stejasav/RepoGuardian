@@ -75,15 +75,19 @@ class ReportGenerator{
   }
 
   async saveReport(html){
-    const reportDir = path.join(__dirname, "../reports");
+    const projectRoot = process.cwd();
+    const reportDir = path.join(projectRoot, "reports");
+    
     await fs.mkdir(reportDir,{recursive: true});
     const files = await fs.readdir(reportDir);
+    
     const reportFiles = files.filter(file =>
       file.startsWith("security-report-") &&
       file.endsWith(".html")
     );
     const reportNumber = reportFiles.length + 1;
     const fileName = `security-report-${reportNumber}.html`;
+    
     const outputPath = path.join(reportDir, fileName);
     await fs.writeFile(outputPath, html, "utf8");
     console.log(`\nReport generated successfully!`);
