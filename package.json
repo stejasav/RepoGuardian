@@ -1,6 +1,6 @@
 {
   "name": "@stejasav/repoguardian",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered GitHub Repository Security Scanner",
   "main": "index.js",
   "bin": {
